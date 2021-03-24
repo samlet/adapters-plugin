@@ -1,0 +1,85 @@
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.gitignore b/.gitignore
+--- a/.gitignore	(revision c257243fc0b289788eae467b7bc599f51afb9bec)
++++ b/.gitignore	(revision 083f7a870dc5912218f3f7f7fa4552b830323096)
+@@ -1,2 +1,5 @@
+ .DS_Store
+-bin/
+\ No newline at end of file
++bin/
++adapters/
++drafts/
++
+Index: ofbiz-rest-impl/src/main/java/org/apache/ofbiz/ws/rs/resources/OFBizServiceResource.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ofbiz-rest-impl/src/main/java/org/apache/ofbiz/ws/rs/resources/OFBizServiceResource.java b/ofbiz-rest-impl/src/main/java/org/apache/ofbiz/ws/rs/resources/OFBizServiceResource.java
+--- a/ofbiz-rest-impl/src/main/java/org/apache/ofbiz/ws/rs/resources/OFBizServiceResource.java	(revision c257243fc0b289788eae467b7bc599f51afb9bec)
++++ b/ofbiz-rest-impl/src/main/java/org/apache/ofbiz/ws/rs/resources/OFBizServiceResource.java	(revision 083f7a870dc5912218f3f7f7fa4552b830323096)
+@@ -45,6 +45,7 @@
+ import javax.ws.rs.core.UriInfo;
+ import javax.ws.rs.ext.Provider;
+ 
++import com.adapters.srv.CcServiceRequestProcessor;
+ import org.apache.ofbiz.base.util.UtilMisc;
+ import org.apache.ofbiz.base.util.UtilValidate;
+ import org.apache.ofbiz.entity.GenericEntityException;
+@@ -53,7 +54,6 @@
+ import org.apache.ofbiz.service.LocalDispatcher;
+ import org.apache.ofbiz.service.ModelService;
+ import org.apache.ofbiz.ws.rs.ApiServiceRequest;
+-import org.apache.ofbiz.ws.rs.ServiceRequestProcessor;
+ import org.apache.ofbiz.ws.rs.annotation.ServiceRequestValidator;
+ import org.apache.ofbiz.ws.rs.response.Success;
+ import org.apache.ofbiz.ws.rs.security.Secured;
+@@ -113,7 +113,7 @@
+     @Secured
+     public Response doGet(@QueryParam(value = "inParams") ApiServiceRequest serviceRequest,
+             @PathParam(value = "serviceName") String serviceName) throws IOException, GenericServiceException {
+-        ServiceRequestProcessor processor = new ServiceRequestProcessor();
++        CcServiceRequestProcessor processor = new CcServiceRequestProcessor();
+         return processor.process(UtilMisc.toMap("serviceName", serviceName, "httpVerb", HttpMethod.GET, "requestMap",
+                 serviceRequest.getInParams(), "dispatcher", getDispatcher(), "request", httpRequest));
+     }
+@@ -135,7 +135,7 @@
+         if (UtilValidate.isEmpty(serviceInParams)) {
+             throw new BadRequestException("The request body is missing.");
+         }
+-        ServiceRequestProcessor processor = new ServiceRequestProcessor();
++        CcServiceRequestProcessor processor = new CcServiceRequestProcessor();
+         return processor.process(UtilMisc.toMap("serviceName", serviceName, "httpVerb", HttpMethod.POST, "requestMap",
+                 serviceInParams, "dispatcher", getDispatcher(), "request", httpRequest));
+     }
+@@ -156,7 +156,7 @@
+         if (UtilValidate.isEmpty(serviceInParams)) {
+             throw new BadRequestException("The request body is missing.");
+         }
+-        ServiceRequestProcessor processor = new ServiceRequestProcessor();
++        CcServiceRequestProcessor processor = new CcServiceRequestProcessor();
+         return processor.process(UtilMisc.toMap("serviceName", serviceName, "httpVerb", HttpMethod.PUT, "requestMap",
+                 serviceInParams, "dispatcher", getDispatcher(), "request", httpRequest));
+     }
+@@ -178,7 +178,7 @@
+         if (UtilValidate.isEmpty(serviceInParams)) {
+             throw new BadRequestException("The request body is missing.");
+         }
+-        ServiceRequestProcessor processor = new ServiceRequestProcessor();
++        CcServiceRequestProcessor processor = new CcServiceRequestProcessor();
+         return processor.process(UtilMisc.toMap("serviceName", serviceName, "httpVerb", HttpMethod.PATCH, "requestMap",
+                 serviceInParams, "dispatcher", getDispatcher(), "request", httpRequest));
+     }
+@@ -200,7 +200,7 @@
+         if (UtilValidate.isEmpty(serviceInParams)) {
+             throw new BadRequestException("The request body is missing.");
+         }
+-        ServiceRequestProcessor processor = new ServiceRequestProcessor();
++        CcServiceRequestProcessor processor = new CcServiceRequestProcessor();
+         return processor.process(UtilMisc.toMap("serviceName", serviceName, "httpVerb", HttpMethod.DELETE, "requestMap",
+                 serviceInParams, "dispatcher", getDispatcher(), "request", httpRequest));
+     }

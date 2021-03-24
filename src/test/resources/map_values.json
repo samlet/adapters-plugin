@@ -1,0 +1,11 @@
+{
+  "defaultValue":99.8,
+  "message": {
+    "type":"entity",
+    "entityName": "Party",
+    "value": {
+      "lastName":"tom"
+    }
+  }
+}
+

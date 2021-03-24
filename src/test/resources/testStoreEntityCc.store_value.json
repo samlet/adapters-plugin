@@ -1,0 +1,11 @@
+{
+  "entity": {
+    "type":"entity",
+    "entityName": "PartyGroup",
+    "value": {
+      "partyId":"bluecc",
+      "groupName": "bluecc cloud service org."
+    }
+  }
+}
+

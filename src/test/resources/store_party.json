@@ -1,0 +1,12 @@
+{
+  "entity": {
+    "type":"entity",
+    "entityName": "Party",
+    "value": {
+      "partyId":"bluecc",
+      "partyTypeId":"PARTY_GROUP",
+      "statusId":"PARTY_ENABLED"
+    }
+  }
+}
+

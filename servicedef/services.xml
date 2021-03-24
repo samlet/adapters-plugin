@@ -31,6 +31,20 @@ under the License.
         <attribute name="message" type="Map" mode="IN" optional="true"/>
         <attribute name="resp" type="String" mode="OUT"/>
     </service>
+
+    <service name="testStoreEntityCc" engine="java" export="true" validate="false" require-new-transaction="true"
+             location="com.adapters.srv.CcTestSrvs" invoke="testStoreEntity">
+        <description>Store entity service</description>
+        <attribute name="entity" type="org.apache.ofbiz.entity.GenericValue" mode="IN" optional="false"/>
+        <attribute name="resp" type="String" mode="OUT"/>
+    </service>
+
+    <service name="storeValuesCc" engine="java" export="true" validate="false" require-new-transaction="true"
+             location="com.adapters.srv.CcDataSrvs" invoke="storeValues">
+        <description>Store multi-values service</description>
+        <attribute name="values" type="List" mode="IN" optional="false"/>
+        <attribute name="resp" type="String" mode="OUT"/>
+    </service>
 </services>
 
 

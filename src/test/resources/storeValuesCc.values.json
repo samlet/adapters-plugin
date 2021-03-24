@@ -1,0 +1,21 @@
+{
+  "values": [
+    {
+      "type": "entity",
+      "entityName": "Party",
+      "value": {
+        "partyId": "bluecc",
+        "partyTypeId": "PARTY_GROUP",
+        "statusId": "PARTY_ENABLED"
+      }
+    },
+    {
+      "type": "entity",
+      "entityName": "PartyGroup",
+      "value": {
+        "partyId": "bluecc",
+        "groupName": "bluecc cloud service org."
+      }
+    }
+  ]
+}

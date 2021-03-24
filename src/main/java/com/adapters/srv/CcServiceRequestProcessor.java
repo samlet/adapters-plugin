@@ -31,6 +31,9 @@ public class CcServiceRequestProcessor {
         Debug.logInfo("input parameters: "+requestMap.keySet(), MODULE);
 
         LocalDispatcher dispatcher = (LocalDispatcher) requestContext.get("dispatcher");
+        MapWrapper wrapper=new MapWrapper(dispatcher.getDelegator());
+        wrapper.convertGenericValue(requestMap);
+
         HttpServletRequest request = (HttpServletRequest) requestContext.get("request");
         GenericValue userLogin = (GenericValue) request.getAttribute("userLogin");
         DispatchContext dispatchContext = dispatcher.getDispatchContext();
@@ -43,7 +46,8 @@ public class CcServiceRequestProcessor {
         if (UtilValidate.isNotEmpty(service.getAction()) && !service.getAction().equalsIgnoreCase(httpVerb)) {
             throw new MethodNotAllowedException("HTTP " + httpVerb + " is not allowed on this service.");
         }
-        Map<String, Object> serviceContext = dispatchContext.makeValidContext(serviceName, ModelService.IN_PARAM, requestMap);
+        Map<String, Object> serviceContext = dispatchContext.makeValidContext(serviceName,
+                ModelService.IN_PARAM, requestMap);
         serviceContext.put("userLogin", userLogin);
         Map<String, Object> result = dispatcher.runSync(serviceName, serviceContext);
         Map<String, Object> responseData = new LinkedHashMap<>();

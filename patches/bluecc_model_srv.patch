@@ -1,0 +1,182 @@
+Index: framework/entity/config/entityengine.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/framework/entity/config/entityengine.xml b/framework/entity/config/entityengine.xml
+--- a/framework/entity/config/entityengine.xml	(revision e08bfa17cb3cf72ad34f87e3492bbc90eeac885e)
++++ b/framework/entity/config/entityengine.xml	(revision d4f7f76f28db96bd808566c9afc072e161d2c1f4)
+@@ -52,7 +52,7 @@
+     <debug-xa-resources value="false" />  <!-- see https://issues.apache.org/jira/browse/OFBIZ-4282 for more -->
+     
+     <delegator name="default" entity-model-reader="main" entity-group-reader="main" entity-eca-reader="main" distributed-cache-clear-enabled="false">
+-        <group-map group-name="org.apache.ofbiz" datasource-name="localderby"/>
++        <group-map group-name="org.apache.ofbiz" datasource-name="localpostgres"/>
+         <group-map group-name="org.apache.ofbiz.olap" datasource-name="localderbyolap"/>
+         <group-map group-name="org.apache.ofbiz.tenant" datasource-name="localderbytenant"/>
+     </delegator>
+Index: framework/service/config/service.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/framework/service/config/service.properties b/framework/service/config/service.properties
+--- a/framework/service/config/service.properties	(revision e08bfa17cb3cf72ad34f87e3492bbc90eeac885e)
++++ b/framework/service/config/service.properties	(revision d4f7f76f28db96bd808566c9afc072e161d2c1f4)
+@@ -18,7 +18,7 @@
+ ###############################################################################
+ 
+ # flag to automatically export all services: same of setting export="true" for all service definitions
+-remotedispatcher.exportall=false
++remotedispatcher.exportall=true
+ # complete answer from SOAP WSDL or only brief message "Problem processing the service" for security reason
+ secureSoapAnswer=true
+ # By default shows all services durations in logs by using a 0 ms value
+Index: framework/service/src/main/java/org/apache/ofbiz/service/ModelServiceReader.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/framework/service/src/main/java/org/apache/ofbiz/service/ModelServiceReader.java b/framework/service/src/main/java/org/apache/ofbiz/service/ModelServiceReader.java
+--- a/framework/service/src/main/java/org/apache/ofbiz/service/ModelServiceReader.java	(revision e08bfa17cb3cf72ad34f87e3492bbc90eeac885e)
++++ b/framework/service/src/main/java/org/apache/ofbiz/service/ModelServiceReader.java	(revision d4f7f76f28db96bd808566c9afc072e161d2c1f4)
+@@ -171,10 +171,15 @@
+         service.setDefaultEntityName(UtilXml.checkEmpty(serviceElement.getAttribute("default-entity-name")).intern());
+         service.setFromLoader(isFromURL ? readerURL.toExternalForm() : handler.getLoaderName());
+         service.setAction(UtilXml.checkEmpty(serviceElement.getAttribute("action")).intern());
++        // +
++        if (service.getAction().isEmpty()){
++            service.setAction("POST");
++        }
+ 
+         // these default to true; if anything but true, make false
+         service.setAuth("true".equalsIgnoreCase(serviceElement.getAttribute("auth")));
+-        service.setExport("true".equalsIgnoreCase(serviceElement.getAttribute("export")));
++        // service.setExport("true".equalsIgnoreCase(serviceElement.getAttribute("export")));
++        service.setExport(true); // +
+         service.setDebug("true".equalsIgnoreCase(serviceElement.getAttribute("debug")));
+ 
+         // these defaults to false; if anything but false, make it true
+Index: framework/service/src/main/java/org/apache/ofbiz/service/rmi/ExampleRemoteClient.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/framework/service/src/main/java/org/apache/ofbiz/service/rmi/ExampleRemoteClient.java b/framework/service/src/main/java/org/apache/ofbiz/service/rmi/ExampleRemoteClient.java
+--- a/framework/service/src/main/java/org/apache/ofbiz/service/rmi/ExampleRemoteClient.java	(revision e08bfa17cb3cf72ad34f87e3492bbc90eeac885e)
++++ b/framework/service/src/main/java/org/apache/ofbiz/service/rmi/ExampleRemoteClient.java	(revision d4f7f76f28db96bd808566c9afc072e161d2c1f4)
+@@ -75,6 +75,7 @@
+     public static void main(String[] args) throws Exception {
+         ExampleRemoteClient rm = new ExampleRemoteClient();
+         Map<String, Object> result = rm.runTestService();
++        System.out.println(result);
+         Debug.logInfo("Service Result Map: " + result, MODULE);
+     }
+ }
+Index: framework/service/src/main/java/org/apache/ofbiz/service/rmi/RemoteDispatcher.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/framework/service/src/main/java/org/apache/ofbiz/service/rmi/RemoteDispatcher.java b/framework/service/src/main/java/org/apache/ofbiz/service/rmi/RemoteDispatcher.java
+--- a/framework/service/src/main/java/org/apache/ofbiz/service/rmi/RemoteDispatcher.java	(revision e08bfa17cb3cf72ad34f87e3492bbc90eeac885e)
++++ b/framework/service/src/main/java/org/apache/ofbiz/service/rmi/RemoteDispatcher.java	(revision d4f7f76f28db96bd808566c9afc072e161d2c1f4)
+@@ -22,6 +22,11 @@
+ import java.rmi.RemoteException;
+ import java.util.Map;
+ 
++import org.apache.ofbiz.entity.Delegator;
++import org.apache.ofbiz.entity.GenericEntityException;
++import org.apache.ofbiz.entity.GenericValue;
++import org.apache.ofbiz.entity.model.ModelEntity;
++import org.apache.ofbiz.entity.model.ModelReader;
+ import org.apache.ofbiz.service.GenericRequester;
+ import org.apache.ofbiz.service.GenericResultWaiter;
+ import org.apache.ofbiz.service.GenericServiceException;
+@@ -204,5 +209,11 @@
+      */
+     void schedule(String serviceName, Map<String, ? extends Object> context, long startTime) throws GenericServiceException, RemoteException;
+ 
++    // Delegator getDelegator() throws RemoteException;
++    GenericValue makeValue(String entityName) throws RemoteException;
++    /** Creates a Entity in the form of a GenericValue without persisting it */
++    GenericValue makeValue(String entityName, Map<String, ? extends Object> fields) throws RemoteException;
++    // ModelReader getModelReader() throws RemoteException;
++    ModelEntity getModelEntity(String entityName) throws GenericEntityException, RemoteException;
+ }
+ 
+Index: framework/service/src/main/java/org/apache/ofbiz/service/rmi/RemoteDispatcherImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/framework/service/src/main/java/org/apache/ofbiz/service/rmi/RemoteDispatcherImpl.java b/framework/service/src/main/java/org/apache/ofbiz/service/rmi/RemoteDispatcherImpl.java
+--- a/framework/service/src/main/java/org/apache/ofbiz/service/rmi/RemoteDispatcherImpl.java	(revision e08bfa17cb3cf72ad34f87e3492bbc90eeac885e)
++++ b/framework/service/src/main/java/org/apache/ofbiz/service/rmi/RemoteDispatcherImpl.java	(revision d4f7f76f28db96bd808566c9afc072e161d2c1f4)
+@@ -25,6 +25,10 @@
+ import java.util.Map;
+ 
+ import org.apache.ofbiz.entity.Delegator;
++import org.apache.ofbiz.entity.GenericEntityException;
++import org.apache.ofbiz.entity.GenericValue;
++import org.apache.ofbiz.entity.model.ModelEntity;
++import org.apache.ofbiz.entity.model.ModelReader;
+ import org.apache.ofbiz.entity.util.EntityUtilProperties;
+ import org.apache.ofbiz.service.GenericRequester;
+ import org.apache.ofbiz.service.GenericResultWaiter;
+@@ -173,4 +177,24 @@
+         }
+     }
+ 
++    public Delegator getDelegator() throws RemoteException{
++        return dispatcher.getDelegator();
++    }
++
++    public GenericValue makeValue(String entityName) throws RemoteException{
++        return dispatcher.getDelegator().makeValue(entityName);
++    }
++
++    /** Creates a Entity in the form of a GenericValue without persisting it */
++    public GenericValue makeValue(String entityName, Map<String, ? extends Object> fields) throws RemoteException{
++        return dispatcher.getDelegator().makeValue(entityName, fields);
++    }
++
++    public ModelReader getModelReader() throws RemoteException{
++        return dispatcher.getDelegator().getModelReader();
++    }
++
++    public ModelEntity getModelEntity(String entityName) throws GenericEntityException, RemoteException {
++        return dispatcher.getDelegator().getModelReader().getModelEntity(entityName);
++    }
+ }
+Index: framework/start/src/main/resources/org/apache/ofbiz/base/start/start.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/framework/start/src/main/resources/org/apache/ofbiz/base/start/start.properties b/framework/start/src/main/resources/org/apache/ofbiz/base/start/start.properties
+--- a/framework/start/src/main/resources/org/apache/ofbiz/base/start/start.properties	(revision e08bfa17cb3cf72ad34f87e3492bbc90eeac885e)
++++ b/framework/start/src/main/resources/org/apache/ofbiz/base/start/start.properties	(revision d4f7f76f28db96bd808566c9afc072e161d2c1f4)
+@@ -22,7 +22,7 @@
+ ####################################
+ 
+ # --- OFBiz startup loaders comma separated
+-ofbiz.start.loaders=main
++ofbiz.start.loaders=main,rmi
+ 
+ # --- OFBiz home directory. Default is current directory
+ #ofbiz.home=
+Index: gradle.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/gradle.properties b/gradle.properties
+--- a/gradle.properties	(revision e08bfa17cb3cf72ad34f87e3492bbc90eeac885e)
++++ b/gradle.properties	(revision d4f7f76f28db96bd808566c9afc072e161d2c1f4)
+@@ -20,4 +20,4 @@
+ org.gradle.console=plain
+ # If you experience heap memory problems during the Gradle build, for example 
+ # building with integrated plugins, the following setting might help
+-#org.gradle.jvmargs=-Xms128m -Xmx1024m -XX:+CMSClassUnloadingEnabled
++org.gradle.jvmargs=-Xms128m -Xmx2048m -XX:+CMSClassUnloadingEnabled
