@@ -1,0 +1,29 @@
+{
+  "req": {
+    "idToFind": "GZ-1000"
+  },
+  "resp": {
+    "statusCode": 200,
+    "statusDescription": "OK",
+    "data": {
+      "product": {
+        "createdStamp": "2021-03-19T12:49:28.823+00:00",
+        "productName": "Tiny Gizmo",
+        "productId": "GZ-1000",
+        "smallImageUrl": "/images/products/GZ-1000/small.png",
+        "createdTxStamp": "2021-03-19T12:49:28.668+00:00",
+        "lastUpdatedTxStamp": "2021-03-19T12:49:39.739+00:00",
+        "isVirtual": "N",
+        "longDescription": "This gizmo is very small and runs on solar power.",
+        "description": "The smallest gizmo in town.",
+        "internalName": "Tiny Gizmo",
+        "lastUpdatedStamp": "2021-03-19T12:49:39.743+00:00",
+        "productTypeId": "FINISHED_GOOD",
+        "isVariant": "N",
+        "largeImageUrl": "/images/products/GZ-1000/large.png"
+      }
+    }
+  }
+}
+
+

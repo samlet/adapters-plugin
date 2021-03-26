@@ -45,6 +45,17 @@ under the License.
         <attribute name="values" type="List" mode="IN" optional="false"/>
         <attribute name="resp" type="String" mode="OUT"/>
     </service>
+
+    <service name="findProductByIdCc" engine="java"  auth="true" export="true" action="POST"
+             location="org.apache.ofbiz.product.product.ProductServices" invoke="findProductById">
+        <description>Finds productId(s) corresponding to a product reference, productId or a GoodIdentification idValue</description>
+        <attribute type="String" mode="IN" name="idToFind" optional="false"/>
+        <attribute type="String" mode="IN" name="goodIdentificationTypeId" optional="true"/>
+        <attribute type="String" mode="IN" name="searchProductFirst" optional="true"/>
+        <attribute type="String" mode="IN" name="searchAllId" optional="true"/>
+        <attribute type="org.apache.ofbiz.entity.GenericValue" mode="OUT" name="product" optional="true"/>
+        <attribute type="List" mode="OUT" name="productsList" optional="true"/>
+    </service>
 </services>
 
 
