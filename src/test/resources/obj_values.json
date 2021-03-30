@@ -1,0 +1,11 @@
+{
+  "defaultValue":99.8,
+  "session": {
+    "type":"object",
+    "factory": "PackingSession",
+    "value": {
+      "facilityId": "tst_fac"
+    }
+  }
+}
+

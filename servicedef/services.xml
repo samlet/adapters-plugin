@@ -39,6 +39,14 @@ under the License.
         <attribute name="resp" type="String" mode="OUT"/>
     </service>
 
+    <service name="testObjectFactory" engine="java" export="true" validate="false"
+             location="com.adapters.srv.CcTestSrvs" invoke="testObjectFactory">
+        <description>Test object factory</description>
+        <attribute name="session" type="org.apache.ofbiz.shipment.packing.PackingSession" mode="IN" optional="false"/>
+        <attribute name="defaultValue" type="Double" mode="IN" default-value="999.9999"/>
+        <attribute name="resp" type="String" mode="OUT"/>
+    </service>
+
     <service name="storeValuesCc" engine="java" export="true" validate="false" require-new-transaction="true"
              location="com.adapters.srv.CcDataSrvs" invoke="storeValues">
         <description>Store multi-values service</description>
@@ -62,6 +70,14 @@ under the License.
         <attribute type="String" mode="IN" name="searchAllId" optional="true"/>
         <attribute type="org.apache.ofbiz.entity.GenericValue" mode="OUT" name="product" optional="true"/>
         <attribute type="List" mode="OUT" name="productsList" optional="true"/>
+    </service>
+
+    <service name="testSrvAdapter" engine="java" export="true" validate="false"
+             location="com.adapters.srv.SrvAdapter" invoke="invokeAction">
+        <description>Adapter service</description>
+        <attribute name="action" type="String" mode="IN"/>
+        <attribute name="userLoginId" type="String" mode="IN"/>
+        <attribute name="result" type="Boolean" mode="OUT"/>
     </service>
 </services>
 

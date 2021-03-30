@@ -7,6 +7,7 @@ import org.apache.ofbiz.entity.GenericEntityException;
 import org.apache.ofbiz.entity.GenericValue;
 import org.apache.ofbiz.service.DispatchContext;
 import org.apache.ofbiz.service.ServiceUtil;
+import org.apache.ofbiz.shipment.packing.PackingSession;
 
 import java.util.Map;
 
@@ -19,6 +20,7 @@ public class CcTestSrvs {
      *@param context Map containing the input parameters
      *@return Map with the result of the service, the output parameters
      */
+    @SuppressWarnings("unchecked")
     public static Map<String, Object> testService(DispatchContext dctx, Map<String, ?> context) {
         Map<String, Object> response = ServiceUtil.returnSuccess();
 
@@ -58,6 +60,13 @@ public class CcTestSrvs {
         }else{
             return ServiceUtil.returnError("Input entity value is null");
         }
+    }
+
+    public static Map<String, Object> testObjectFactory(DispatchContext dctx, Map<String, ?> context) {
+        PackingSession val= (PackingSession)context.get("session");
+        Map<String, Object> response = ServiceUtil.returnSuccess();
+        response.put("resp", val.getFacilityId());
+        return response;
     }
 }
 

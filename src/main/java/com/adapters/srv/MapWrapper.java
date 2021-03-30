@@ -7,6 +7,7 @@ import org.apache.ofbiz.entity.GenericEntity;
 import org.apache.ofbiz.entity.GenericValue;
 import org.apache.ofbiz.entity.model.ModelEntity;
 import org.apache.ofbiz.entity.model.ModelField;
+import org.apache.ofbiz.service.DispatchContext;
 
 import java.util.*;
 
@@ -14,13 +15,19 @@ public class MapWrapper {
     private static final String MODULE = MapWrapper.class.getName();
     private final Delegator delegator;
 
-    public MapWrapper(Delegator delegator) {
-        this.delegator = delegator;
+    DispatchContext dctx;
+    GenericValue userLogin;
+
+    public MapWrapper(DispatchContext dctx, GenericValue userLogin) {
+        this.dctx=dctx;
+        this.userLogin=userLogin;
+        this.delegator = dctx.getDelegator();
     }
 
     @SuppressWarnings("unchecked")
     public void convertGenericValue(Map<String, Object> mapValues){
         Map<String, Object> convertedMap= new HashMap<>();
+        CcObjectFactory factories=CcObjectFactory.getInstance();
         for (Map.Entry<String,Object> entry : mapValues.entrySet()){
             // check input parameter is whether a map
             if(entry.getValue() instanceof Map){
@@ -34,6 +41,13 @@ public class MapWrapper {
                     // GenericValue value=fillEntityValue(entName, attrs);
                     GenericValue value=delegator.makeValidValue(entName, attrs);
                     convertedMap.put(entry.getKey(), value);
+                }else if (objType.equals("object")){
+                    String fac=(String)valMap.get("factory");
+                    if(factories.hasFactory(fac)) {
+                        Map<String,Object> attrs=(Map<String,Object>)valMap.getOrDefault("value", new HashMap<>());
+                        Object val = factories.getObject(fac, dctx, userLogin, attrs);
+                        convertedMap.put(entry.getKey(), val);
+                    }
                 }
             }else if(entry.getValue() instanceof List){
                 List<?> valueList=(List<?>)entry.getValue();
@@ -50,6 +64,7 @@ public class MapWrapper {
             }
         }
 
+        // overrides
         mapValues.putAll(convertedMap);
     }
 

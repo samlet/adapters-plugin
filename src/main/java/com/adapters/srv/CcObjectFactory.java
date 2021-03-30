@@ -22,17 +22,27 @@ public class CcObjectFactory {
     private CcObjectFactory() {
         this.factories.put("PackingSession", new ObjectFactoryIntf<Object>() {
             @Override
-            public Object create(DispatchContext dctx, GenericValue userLogin, Map<String, ?> context) {
-                return new PackingSession(dctx.getDispatcher(), userLogin);
+            public Object create(DispatchContext dctx, GenericValue userLogin, Map<String, ?> attrs) {
+                // String facilityId, String binId, String orderId, String shipGrp
+                return new PackingSession(dctx.getDispatcher(), userLogin,
+                        (String)attrs.get("facilityId"),
+                        (String)attrs.get("binId"),
+                        (String)attrs.get("orderId"),
+                        (String)attrs.get("shipGrp")
+                        );
             }
         });
     }
 
     public Object getObject(String factoryName, DispatchContext dctx,
-                            GenericValue userLogin, Map<String, ?> context){
+                            GenericValue userLogin, Map<String, ?> attrs){
         ObjectFactoryIntf<Object> factory=this.factories.get(factoryName);
         Preconditions.checkNotNull(factory, "No such factory "+factoryName);
-        return factory.create(dctx, userLogin, context);
+        return factory.create(dctx, userLogin, attrs);
+    }
+
+    public boolean hasFactory(String name){
+        return this.factories.containsKey(name);
     }
 }
 
