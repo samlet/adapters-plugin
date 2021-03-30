@@ -11,6 +11,7 @@ import java.util.Map;
 
 public class CcDataSrvs {
     private static final String MODULE = CcDataSrvs.class.getName();
+    @SuppressWarnings("unchecked")
     public static Map<String, Object> storeValues(DispatchContext dctx, Map<String, ?> context) {
         List<GenericValue> vals= (List<GenericValue>)context.get("values");
         if(vals!=null) {
@@ -28,6 +29,24 @@ public class CcDataSrvs {
             }
         }else{
             return ServiceUtil.returnError("Input entity values is empty");
+        }
+    }
+
+    public static Map<String, Object> storeValue(DispatchContext dctx, Map<String, ?> context) {
+        GenericValue val= (GenericValue)context.get("entity");
+        if(val!=null) {
+            try {
+                GenericValue new_value= dctx.getDelegator().createOrStore(val);
+
+                Map<String, Object> response = ServiceUtil.returnSuccess();
+                response.put("new_value", new_value);
+                return response;
+            }catch (GenericEntityException e) {
+                Debug.logError(e, "Entity Error:" + e.getMessage(), MODULE);
+                return ServiceUtil.returnError("Entity Error:" + e.getMessage());
+            }
+        }else{
+            return ServiceUtil.returnError("Input entity value is null");
         }
     }
 }

@@ -31,12 +31,13 @@ public class CcServiceRequestProcessor {
         Debug.logInfo("input parameters: "+requestMap.keySet(), MODULE);
 
         LocalDispatcher dispatcher = (LocalDispatcher) requestContext.get("dispatcher");
-        MapWrapper wrapper=new MapWrapper(dispatcher.getDelegator());
-        wrapper.convertGenericValue(requestMap);
-
         HttpServletRequest request = (HttpServletRequest) requestContext.get("request");
         GenericValue userLogin = (GenericValue) request.getAttribute("userLogin");
         DispatchContext dispatchContext = dispatcher.getDispatchContext();
+
+        MapWrapper wrapper=new MapWrapper(dispatcher.getDelegator());
+        wrapper.convertGenericValue(requestMap);
+
         ModelService service = null;
         try {
             service = dispatchContext.getModelService(serviceName);

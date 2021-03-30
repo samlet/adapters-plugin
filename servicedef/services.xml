@@ -46,6 +46,13 @@ under the License.
         <attribute name="resp" type="String" mode="OUT"/>
     </service>
 
+    <service name="storeValueCc" engine="java" export="true" validate="false" require-new-transaction="true"
+             location="com.adapters.srv.CcDataSrvs" invoke="storeValue">
+        <description>Store multi-values service</description>
+        <attribute name="entity" type="org.apache.ofbiz.entity.GenericValue" mode="IN" optional="false"/>
+        <attribute name="new_value" type="org.apache.ofbiz.entity.GenericValue" mode="OUT"/>
+    </service>
+
     <service name="findProductByIdCc" engine="java"  auth="true" export="true" action="POST"
              location="org.apache.ofbiz.product.product.ProductServices" invoke="findProductById">
         <description>Finds productId(s) corresponding to a product reference, productId or a GoodIdentification idValue</description>
