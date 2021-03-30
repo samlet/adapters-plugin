@@ -9,6 +9,7 @@ import org.apache.ofbiz.entity.model.ModelEntity;
 import org.apache.ofbiz.entity.model.ModelField;
 import org.apache.ofbiz.service.DispatchContext;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 public class MapWrapper {
@@ -17,9 +18,11 @@ public class MapWrapper {
 
     DispatchContext dctx;
     GenericValue userLogin;
+    HttpServletRequest request;
 
-    public MapWrapper(DispatchContext dctx, GenericValue userLogin) {
+    public MapWrapper(DispatchContext dctx, HttpServletRequest request, GenericValue userLogin) {
         this.dctx=dctx;
+        this.request=request;
         this.userLogin=userLogin;
         this.delegator = dctx.getDelegator();
     }
@@ -45,7 +48,7 @@ public class MapWrapper {
                     String fac=(String)valMap.get("factory");
                     if(factories.hasFactory(fac)) {
                         Map<String,Object> attrs=(Map<String,Object>)valMap.getOrDefault("value", new HashMap<>());
-                        Object val = factories.getObject(fac, dctx, userLogin, attrs);
+                        Object val = factories.getObject(fac, dctx, request, userLogin, attrs);
                         convertedMap.put(entry.getKey(), val);
                     }
                 }

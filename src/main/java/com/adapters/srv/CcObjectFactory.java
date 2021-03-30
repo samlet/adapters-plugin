@@ -5,6 +5,7 @@ import org.apache.ofbiz.entity.GenericValue;
 import org.apache.ofbiz.service.DispatchContext;
 import org.apache.ofbiz.shipment.packing.PackingSession;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +23,8 @@ public class CcObjectFactory {
     private CcObjectFactory() {
         this.factories.put("PackingSession", new ObjectFactoryIntf<Object>() {
             @Override
-            public Object create(DispatchContext dctx, GenericValue userLogin, Map<String, ?> attrs) {
+            public Object create(DispatchContext dctx, HttpServletRequest request,
+                                 GenericValue userLogin, Map<String, ?> attrs) {
                 // String facilityId, String binId, String orderId, String shipGrp
                 return new PackingSession(dctx.getDispatcher(), userLogin,
                         (String)attrs.get("facilityId"),
@@ -35,10 +37,11 @@ public class CcObjectFactory {
     }
 
     public Object getObject(String factoryName, DispatchContext dctx,
+                            HttpServletRequest request,
                             GenericValue userLogin, Map<String, ?> attrs){
         ObjectFactoryIntf<Object> factory=this.factories.get(factoryName);
         Preconditions.checkNotNull(factory, "No such factory "+factoryName);
-        return factory.create(dctx, userLogin, attrs);
+        return factory.create(dctx, request, userLogin, attrs);
     }
 
     public boolean hasFactory(String name){

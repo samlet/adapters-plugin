@@ -35,7 +35,7 @@ public class CcServiceRequestProcessor {
         GenericValue userLogin = (GenericValue) request.getAttribute("userLogin");
         DispatchContext dispatchContext = dispatcher.getDispatchContext();
 
-        MapWrapper wrapper=new MapWrapper(dispatchContext, userLogin);
+        MapWrapper wrapper=new MapWrapper(dispatchContext, request, userLogin);
         wrapper.convertGenericValue(requestMap);
 
         ModelService service = null;
