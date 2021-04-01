@@ -15,6 +15,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import static org.junit.Assert.*;
 
+@SuppressWarnings("unchecked")
 public class CcTestSrvsTest {
 
     @Test
@@ -59,6 +60,12 @@ public class CcTestSrvsTest {
             }
         }
 
+    }
+
+    @Test
+    public void testDateTime(){
+        java.sql.Timestamp ts=java.sql.Timestamp.valueOf("2006-04-25 12:46:27.122");
+        System.out.println(ts);
     }
 }
 

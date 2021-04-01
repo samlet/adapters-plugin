@@ -79,6 +79,22 @@ under the License.
         <attribute name="userLoginId" type="String" mode="IN"/>
         <attribute name="result" type="Boolean" mode="OUT"/>
     </service>
+
+    <service name="allServices" engine="java" export="true" validate="false"
+             location="com.adapters.srv.SrvAdapter" invoke="invokeAction">
+        <description>List all services</description>
+        <attribute name="action" type="String" mode="IN" default-value="allServiceNames"/>
+        <attribute name="filter" type="String" mode="IN"/>
+        <attribute name="result" type="List" mode="OUT"/>
+    </service>
+
+    <service name="entities" engine="java" export="true" validate="false"
+             location="com.adapters.srv.SrvAdapter" invoke="invokeAction">
+        <description>List all services</description>
+        <attribute name="action" type="String" mode="IN" default-value="entities"/>
+        <attribute name="filter" type="String" mode="IN"/>
+        <attribute name="result" type="List" mode="OUT"/>
+    </service>
 </services>
 
 
