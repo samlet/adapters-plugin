@@ -18,12 +18,11 @@ public class CcDataSrvs {
         List<GenericValue> vals= (List<GenericValue>)context.get("values");
         if(vals!=null) {
             try {
-                for(GenericValue val:vals) {
-                    dctx.getDelegator().createOrStore(val);
-                }
+                // for(GenericValue val:vals) dctx.getDelegator().createOrStore(val);
+                int total=dctx.getDelegator().storeAll(vals);
 
                 Map<String, Object> response = ServiceUtil.returnSuccess();
-                response.put("resp", "total store values:" + vals.size());
+                response.put("resp", "number of rows effected: " + total);
                 return response;
             }catch (GenericEntityException e) {
                 Debug.logError(e, "Entity Error:" + e.getMessage(), MODULE);
