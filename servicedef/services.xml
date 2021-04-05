@@ -95,6 +95,14 @@ under the License.
         <attribute name="filter" type="String" mode="IN"/>
         <attribute name="result" type="List" mode="OUT"/>
     </service>
+
+    <service name="findCc" engine="java" export="true" validate="false"
+             location="com.adapters.srv.CcDataSrvs" invoke="find">
+        <description>Find entity data</description>
+        <attribute name="entityName" type="String" mode="IN" optional="false"/>
+        <attribute name="maxRows" type="Integer" mode="IN" optional="true"/>
+        <attribute name="result" type="List" mode="OUT"/>
+    </service>
 </services>
 
 

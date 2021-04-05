@@ -67,5 +67,11 @@ public class CcTestSrvsTest {
         java.sql.Timestamp ts=java.sql.Timestamp.valueOf("2006-04-25 12:46:27.122");
         System.out.println(ts);
     }
+
+    @Test
+    public void testServiceReg(){
+        Class<?> clz=SrvAdapter.class;
+        System.out.println(clz.getName()+", "+clz.getSimpleName());
+    }
 }
 

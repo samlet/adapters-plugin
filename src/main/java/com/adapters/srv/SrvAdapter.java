@@ -89,6 +89,10 @@ public class SrvAdapter{
         });
     }
 
+    public void addSrv(String name, SrvIntf srvIntf){
+        this.wrappers.put(name, srvIntf);
+    }
+
     public static Map<String, Object> boolResp(boolean val){
         Map<String, Object> result = ServiceUtil.returnMessage(ModelService.RESPOND_SUCCESS, "ok");
         result.put("result", val);

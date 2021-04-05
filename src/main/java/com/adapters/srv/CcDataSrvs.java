@@ -1,8 +1,10 @@
 package com.adapters.srv;
 
 import org.apache.ofbiz.base.util.Debug;
+import org.apache.ofbiz.base.util.UtilMisc;
 import org.apache.ofbiz.entity.GenericEntityException;
 import org.apache.ofbiz.entity.GenericValue;
+import org.apache.ofbiz.entity.util.EntityFindOptions;
 import org.apache.ofbiz.service.DispatchContext;
 import org.apache.ofbiz.service.ServiceUtil;
 
@@ -48,5 +50,22 @@ public class CcDataSrvs {
         }else{
             return ServiceUtil.returnError("Input entity value is null");
         }
+    }
+
+    public static Map<String, Object> find(DispatchContext dctx, Map<String, Object> context) {
+        Map<String, Object> response = ServiceUtil.returnSuccess();
+        Integer maxRows= (Integer) context.getOrDefault("maxRows", 10);
+        String entityName=(String)context.get("entityName");
+        EntityFindOptions findOptions = new EntityFindOptions();
+        findOptions.setMaxRows(maxRows);
+        try {
+            List<GenericValue> result = dctx.getDelegator().findList(entityName, null, null,
+                    null, findOptions, false);
+            response.put("result", result);
+        } catch (GenericEntityException e) {
+            Debug.logError(e, "Entity Error:" + e.getMessage(), MODULE);
+            return ServiceUtil.returnError("Entity Error:" + e.getMessage());
+        }
+        return response;
     }
 }
