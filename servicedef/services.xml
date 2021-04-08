@@ -103,6 +103,13 @@ under the License.
         <attribute name="maxRows" type="Integer" mode="IN" optional="true"/>
         <attribute name="result" type="List" mode="OUT"/>
     </service>
+
+    <service name="getStatusItemsForType" engine="groovy"
+             location="component://adapters/groovyScripts/CommonServices.groovy" invoke="getStatusItemsForType">
+        <description>Get the status items</description>
+        <attribute name="statusTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="statusItems" type="List" mode="OUT" optional="false"/>
+    </service>
 </services>
 
 

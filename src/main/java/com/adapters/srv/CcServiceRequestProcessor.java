@@ -1,5 +1,6 @@
 package com.adapters.srv;
 
+import com.bluecc.triggers.ServiceTrigger;
 import org.apache.ofbiz.base.util.Debug;
 import org.apache.ofbiz.base.util.UtilValidate;
 import org.apache.ofbiz.entity.GenericValue;
@@ -38,6 +39,13 @@ public class CcServiceRequestProcessor {
         MapWrapper wrapper=new MapWrapper(dispatchContext, request, userLogin);
         wrapper.convertGenericValue(requestMap);
 
+        return runService(serviceName, httpVerb, requestMap, dispatcher,
+                request, userLogin, dispatchContext);
+    }
+
+    private Response runService(String serviceName, String httpVerb, Map<String, Object> requestMap,
+                                LocalDispatcher dispatcher, HttpServletRequest request,
+                                GenericValue userLogin, DispatchContext dispatchContext) throws GenericServiceException {
         ModelService service = null;
         try {
             service = dispatchContext.getModelService(serviceName);
@@ -49,7 +57,13 @@ public class CcServiceRequestProcessor {
         }
         Map<String, Object> serviceContext = dispatchContext.makeValidContext(serviceName,
                 ModelService.IN_PARAM, requestMap);
+
+        ProcContext triggerCtx=new ProcContext(service, serviceContext,
+                dispatchContext, userLogin, request);
+        ServiceTrigger.getInstance().fire(triggerCtx);
+
         serviceContext.put("userLogin", userLogin);
+
         Map<String, Object> result = dispatcher.runSync(serviceName, serviceContext);
         Map<String, Object> responseData = new LinkedHashMap<>();
         if (ServiceUtil.isSuccess(result)) {
@@ -63,6 +77,10 @@ public class CcServiceRequestProcessor {
                     }
                 }
             }
+
+            triggerCtx.setResponseData(responseData);
+            ServiceTrigger.getInstance().succ(triggerCtx);
+
             return RestApiUtil.success((String) result.get(ModelService.SUCCESS_MESSAGE), responseData);
         } else {
             return ErrorUtil.buildErrorFromServiceResult(serviceName, result, request.getLocale());
