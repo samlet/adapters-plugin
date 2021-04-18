@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -83,7 +84,11 @@ public class CcServiceRequestProcessor {
 
             return RestApiUtil.success((String) result.get(ModelService.SUCCESS_MESSAGE), responseData);
         } else {
-            return ErrorUtil.buildErrorFromServiceResult(serviceName, result, request.getLocale());
+            Locale locale= Locale.getDefault();
+            if(request!=null){
+                locale=request.getLocale();
+            }
+            return ErrorUtil.buildErrorFromServiceResult(serviceName, result, locale);
         }
     }
 }
