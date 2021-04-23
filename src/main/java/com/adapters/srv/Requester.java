@@ -6,7 +6,6 @@ import org.apache.ofbiz.entity.DelegatorFactory;
 import org.apache.ofbiz.security.Security;
 import org.apache.ofbiz.security.SecurityConfigurationException;
 import org.apache.ofbiz.security.SecurityFactory;
-import org.apache.ofbiz.service.GenericAbstractDispatcher;
 import org.apache.ofbiz.service.GenericServiceException;
 import org.apache.ofbiz.service.LocalDispatcher;
 import org.apache.ofbiz.service.ServiceContainer;
