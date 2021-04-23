@@ -40,6 +40,15 @@ public class EntityMeta {
     private String description;
     private String packageName;
     private List<RelationMeta> relations=new ArrayList<>();
+    private List<String> keys=new ArrayList<>();
+
+    public List<String> getKeys() {
+        return keys;
+    }
+
+    public void setKeys(List<String> keys) {
+        this.keys = keys;
+    }
 
     public List<RelationMeta> getRelations() {
         return relations;

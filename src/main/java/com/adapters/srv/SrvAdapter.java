@@ -104,6 +104,8 @@ public class SrvAdapter{
             meta.getRelations().add(rel);
         });
 
+        meta.getKeys().addAll(e.getPkFieldNames());
+
         return meta;
     }
 
