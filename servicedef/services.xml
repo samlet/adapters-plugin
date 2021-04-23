@@ -96,6 +96,20 @@ under the License.
         <attribute name="result" type="List" mode="OUT"/>
     </service>
 
+    <service name="getEntityMeta" engine="java" export="true" validate="false"
+             location="com.adapters.srv.SrvAdapter" invoke="getEntityMeta">
+        <description>Get entity meta</description>
+        <attribute name="entityName" type="String" mode="IN"/>
+        <attribute name="entity" type="com.adapters.objects.EntityMeta" mode="OUT"/>
+    </service>
+
+    <service name="getServiceMeta" engine="java" export="true" validate="false"
+             location="com.adapters.srv.SrvAdapter" invoke="getServiceMeta">
+        <description>Get service meta</description>
+        <attribute name="serviceName" type="String" mode="IN"/>
+        <attribute name="service" type="com.adapters.objects.ServiceMeta" mode="OUT"/>
+    </service>
+
     <service name="findCc" engine="java" export="true" validate="false"
              location="com.adapters.srv.CcDataSrvs" invoke="find">
         <description>Find entity data</description>

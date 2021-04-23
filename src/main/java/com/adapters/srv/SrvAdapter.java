@@ -2,6 +2,7 @@ package com.adapters.srv;
 
 import com.adapters.objects.EntityMeta;
 import com.adapters.objects.FieldMeta;
+import com.adapters.objects.ServiceMeta;
 import com.google.common.base.Preconditions;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.ofbiz.entity.GenericEntityException;
@@ -9,8 +10,10 @@ import org.apache.ofbiz.entity.model.ModelEntity;
 import org.apache.ofbiz.entity.model.ModelField;
 import org.apache.ofbiz.security.SecurityUtil;
 import org.apache.ofbiz.service.DispatchContext;
+import org.apache.ofbiz.service.GenericServiceException;
 import org.apache.ofbiz.service.ModelService;
 import org.apache.ofbiz.service.ServiceUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -67,26 +70,59 @@ public class SrvAdapter{
                 List<EntityMeta> ents= Lists.newArrayList();
                 for(String ent:vals){
                     ModelEntity e=dctx.getDelegator().getModelEntity(ent);
-                    EntityMeta meta=new EntityMeta();
-                    meta.setName(e.getEntityName());
-                    meta.setDescription(e.getDescription());
-                    meta.setPackageName(e.getPackageName());
-
-                    for (Iterator<ModelField> it = e.getFieldsIterator(); it.hasNext(); ) {
-                        ModelField fld = it.next();
-                        FieldMeta fldMeta=new FieldMeta();
-                        fldMeta.setName(fld.getName());
-                        fldMeta.setType(fld.getType());
-                        fldMeta.setNotNull(fld.getIsNotNull());
-                        fldMeta.setPk(fld.getIsPk());
-                        meta.getFields().add(fldMeta);
-                    }
+                    EntityMeta meta = getEntityMeta(e);
 
                     ents.add(meta);
                 }
                 return objectsResp(ents);
             }
         });
+    }
+
+    @NotNull
+    public EntityMeta getEntityMeta(ModelEntity e) {
+        EntityMeta meta=new EntityMeta();
+        meta.setName(e.getEntityName());
+        meta.setDescription(e.getDescription());
+        meta.setPackageName(e.getPackageName());
+
+        for (Iterator<ModelField> it = e.getFieldsIterator(); it.hasNext(); ) {
+            ModelField fld = it.next();
+            FieldMeta fldMeta=new FieldMeta();
+            fldMeta.setName(fld.getName());
+            fldMeta.setType(fld.getType());
+            fldMeta.setNotNull(fld.getIsNotNull());
+            fldMeta.setPk(fld.getIsPk());
+            meta.getFields().add(fldMeta);
+        }
+
+        e.getRelations().stream().forEach(r -> {
+            EntityMeta.RelationMeta rel=new EntityMeta.RelationMeta();
+            rel.setName(r.getCombinedName());
+            rel.setRelEntityName(r.getRelEntityName());
+            rel.setType(r.getType());
+            meta.getRelations().add(rel);
+        });
+
+        return meta;
+    }
+
+    public ServiceMeta getServiceMeta(ModelService srv){
+        ServiceMeta meta=new ServiceMeta();
+        meta.setName(srv.getName());
+        meta.setDescription(srv.getDescription());
+        meta.setAction(srv.getAction());
+
+        srv.getContextParamList().stream().forEach(p -> {
+            ServiceMeta.ParameterMeta para=new ServiceMeta.ParameterMeta();
+            para.setName(p.getName());
+            para.setRepr(p.getShortDisplayDescription());
+            para.setFormLabel(p.getFormLabel());
+            para.setType(p.getType());
+            para.setMode(p.getMode());
+            meta.getParameters().add(para);
+        });
+        return meta;
     }
 
     public void addSrv(String name, SrvIntf srvIntf){
@@ -96,6 +132,12 @@ public class SrvAdapter{
     public static Map<String, Object> boolResp(boolean val){
         Map<String, Object> result = ServiceUtil.returnMessage(ModelService.RESPOND_SUCCESS, "ok");
         result.put("result", val);
+        return result;
+    }
+
+    public static Map<String, Object> response(String key, Object data){
+        Map<String, Object> result = ServiceUtil.returnMessage(ModelService.RESPOND_SUCCESS, "ok");
+        result.put(key, data);
         return result;
     }
 
@@ -117,6 +159,20 @@ public class SrvAdapter{
         SrvIntf srv=SrvAdapter.getInstance().wrappers.get(action);
         Preconditions.checkNotNull(action, "Cannot find action "+action);
         return srv.proc(dctx, context);
+    }
+
+    public static Map<String, Object> getEntityMeta(DispatchContext dctx, Map<String, Object> context) throws GenericEntityException {
+        String entityName=(String)context.get("entityName");
+        ModelEntity ent=dctx.getDelegator().getModelEntity(entityName);
+        EntityMeta meta= getInstance().getEntityMeta(ent);
+        return response("entity", meta);
+    }
+
+    public static Map<String, Object> getServiceMeta(DispatchContext dctx, Map<String, Object> context) throws GenericServiceException {
+        String serviceName=(String)context.get("serviceName");
+        ModelService srv=dctx.getModelService(serviceName);
+        ServiceMeta meta= getInstance().getServiceMeta(srv);
+        return response("service", meta);
     }
 }
 
