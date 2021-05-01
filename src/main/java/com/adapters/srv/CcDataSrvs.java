@@ -53,7 +53,7 @@ public class CcDataSrvs {
 
     public static Map<String, Object> find(DispatchContext dctx, Map<String, Object> context) {
         Map<String, Object> response = ServiceUtil.returnSuccess();
-        Integer maxRows= (Integer) context.getOrDefault("maxRows", 10);
+        Integer maxRows= (Integer) context.getOrDefault("maxRows", 100);
         String entityName=(String)context.get("entityName");
         EntityFindOptions findOptions = new EntityFindOptions();
         findOptions.setMaxRows(maxRows);
