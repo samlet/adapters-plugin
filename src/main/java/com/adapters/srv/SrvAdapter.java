@@ -122,6 +122,7 @@ public class SrvAdapter{
             para.setFormLabel(p.getFormLabel());
             para.setType(p.getType());
             para.setMode(p.getMode());
+            para.setOptional(p.isOptional());
             meta.getParameters().add(para);
         });
         return meta;

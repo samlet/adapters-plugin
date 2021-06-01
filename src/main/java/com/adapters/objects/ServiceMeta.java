@@ -53,6 +53,10 @@ public class ServiceMeta {
     public static class ParameterMeta{
         private String name;
         private String type;
+        private String repr;
+        private String mode;
+        private String formLabel;
+        private boolean optional;
 
         public String getRepr() {
             return repr;
@@ -62,10 +66,13 @@ public class ServiceMeta {
             this.repr = repr;
         }
 
-        private String repr;
-        private String mode;
-        private String formLabel;
+        public boolean isOptional() {
+            return optional;
+        }
 
+        public void setOptional(boolean optional) {
+            this.optional = optional;
+        }
 
         public String getMode() {
             return mode;
