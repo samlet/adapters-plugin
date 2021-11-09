@@ -18,11 +18,10 @@ public class MapWrapper {
 
     DispatchContext dctx;
     GenericValue userLogin;
-    HttpServletRequest request;
+    // HttpServletRequest request;
 
-    public MapWrapper(DispatchContext dctx, HttpServletRequest request, GenericValue userLogin) {
+    public MapWrapper(DispatchContext dctx, GenericValue userLogin) {
         this.dctx=dctx;
-        this.request=request;
         this.userLogin=userLogin;
         this.delegator = dctx.getDelegator();
     }
@@ -48,7 +47,7 @@ public class MapWrapper {
                     String fac=(String)valMap.get("factory");
                     if(factories.hasFactory(fac)) {
                         Map<String,Object> attrs=(Map<String,Object>)valMap.getOrDefault("value", new HashMap<>());
-                        Object val = factories.getObject(fac, dctx, request, userLogin, attrs);
+                        Object val = factories.getObject(fac, dctx, userLogin, attrs);
                         convertedMap.put(entry.getKey(), val);
                     }
                 }

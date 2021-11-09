@@ -12,16 +12,16 @@ public class ProcContext {
     private final Map<String, Object> parameters;
     private final DispatchContext dctx;
     private final GenericValue userLogin;
-    private final HttpServletRequest request;
+    // private final HttpServletRequest request;
     private Map<String, Object> responseData;
 
     public ProcContext(ModelService service, Map<String, Object> parameters, DispatchContext dctx,
-                       GenericValue userLogin, HttpServletRequest request) {
+                       GenericValue userLogin) {
         this.service = service;
         this.parameters = parameters;
         this.dctx = dctx;
         this.userLogin = userLogin;
-        this.request = request;
+        // this.request = request;
     }
 
     public Map<String, Object> getResponseData() {
@@ -48,7 +48,7 @@ public class ProcContext {
         return userLogin;
     }
 
-    public HttpServletRequest getRequest() {
-        return request;
-    }
+    // public HttpServletRequest getRequest() {
+    //     return request;
+    // }
 }

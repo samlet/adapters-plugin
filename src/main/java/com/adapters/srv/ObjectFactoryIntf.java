@@ -7,6 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 public interface ObjectFactoryIntf<T> {
-    T create(DispatchContext dctx, HttpServletRequest request, GenericValue userLogin, Map<String, ?> context);
+    T create(DispatchContext dctx, GenericValue userLogin, Map<String, ?> context);
 }
 

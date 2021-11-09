@@ -1,6 +1,7 @@
 package com.adapters.srv;
 
 import com.bluecc.triggers.ServiceTrigger;
+import com.google.common.base.Preconditions;
 import org.apache.ofbiz.base.util.Debug;
 import org.apache.ofbiz.base.util.UtilValidate;
 import org.apache.ofbiz.entity.GenericValue;
@@ -19,6 +20,7 @@ import java.util.Set;
 
 public class CcServiceRequestProcessor {
     private static final String MODULE = CcServiceRequestProcessor.class.getName();
+
     /**
      * @param requestContext
      * @return
@@ -30,22 +32,30 @@ public class CcServiceRequestProcessor {
         String httpVerb = (String) requestContext.get("httpVerb");
 
         Map<String, Object> requestMap = (Map<String, Object>) requestContext.get("requestMap");
-        Debug.logInfo("input parameters: "+requestMap.keySet(), MODULE);
+        Debug.logInfo("input parameters: " + requestMap.keySet(), MODULE);
 
         LocalDispatcher dispatcher = (LocalDispatcher) requestContext.get("dispatcher");
-        HttpServletRequest request = (HttpServletRequest) requestContext.get("request");
-        GenericValue userLogin = (GenericValue) request.getAttribute("userLogin");
-        DispatchContext dispatchContext = dispatcher.getDispatchContext();
 
-        MapWrapper wrapper=new MapWrapper(dispatchContext, request, userLogin);
+        GenericValue userLogin = null;
+        HttpServletRequest request = (HttpServletRequest) requestContext.get("request");
+        if(request!=null) {
+            userLogin = (GenericValue) request.getAttribute("userLogin");
+        }
+        if(userLogin==null){
+            userLogin = (GenericValue) requestContext.get("userLogin");
+        }
+        Preconditions.checkNotNull(userLogin, "Not assign a userLogin");
+
+        DispatchContext dispatchContext = dispatcher.getDispatchContext();
+        MapWrapper wrapper = new MapWrapper(dispatchContext, userLogin);
         wrapper.convertGenericValue(requestMap);
 
         return runService(serviceName, httpVerb, requestMap, dispatcher,
-                request, userLogin, dispatchContext);
+                userLogin, dispatchContext);
     }
 
     private Response runService(String serviceName, String httpVerb, Map<String, Object> requestMap,
-                                LocalDispatcher dispatcher, HttpServletRequest request,
+                                LocalDispatcher dispatcher,
                                 GenericValue userLogin, DispatchContext dispatchContext) throws GenericServiceException {
         ModelService service = null;
         try {
@@ -59,8 +69,8 @@ public class CcServiceRequestProcessor {
         Map<String, Object> serviceContext = dispatchContext.makeValidContext(serviceName,
                 ModelService.IN_PARAM, requestMap);
 
-        ProcContext triggerCtx=new ProcContext(service, serviceContext,
-                dispatchContext, userLogin, request);
+        ProcContext triggerCtx = new ProcContext(service, serviceContext,
+                dispatchContext, userLogin);
         ServiceTrigger.getInstance().fire(triggerCtx);
 
         serviceContext.put("userLogin", userLogin);
@@ -84,10 +94,10 @@ public class CcServiceRequestProcessor {
 
             return RestApiUtil.success((String) result.get(ModelService.SUCCESS_MESSAGE), responseData);
         } else {
-            Locale locale= Locale.getDefault();
-            if(request!=null){
-                locale=request.getLocale();
-            }
+            Locale locale = Locale.getDefault();
+            // if(request!=null){
+            //     locale=request.getLocale();
+            // }
             return ErrorUtil.buildErrorFromServiceResult(serviceName, result, locale);
         }
     }
